@@ -1,0 +1,69 @@
+{
+  "version": 4,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 23,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "BOARD": "rmcs_slave_lite"
+      }
+    },
+    {
+      "name": "debug-flash-xip",
+      "displayName": "Debug + flash_xip",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "HPM_BUILD_TYPE": "flash_xip"
+      }
+    },
+    {
+      "name": "debug-ram",
+      "displayName": "Debug + ram",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "HPM_BUILD_TYPE": "ram"
+      }
+    },
+    {
+      "name": "release-flash-xip",
+      "displayName": "Release + flash_xip",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "HPM_BUILD_TYPE": "flash_xip"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug-flash-xip",
+      "configurePreset": "debug-flash-xip",
+      "targets": [
+        "demo.elf"
+      ]
+    },
+    {
+      "name": "debug-ram",
+      "configurePreset": "debug-ram",
+      "targets": [
+        "demo.elf"
+      ]
+    },
+    {
+      "name": "release-flash-xip",
+      "configurePreset": "release-flash-xip",
+      "targets": [
+        "demo.elf"
+      ]
+    }
+  ]
+}
