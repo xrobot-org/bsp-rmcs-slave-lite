@@ -1,6 +1,6 @@
 {
-  "clientKey": "8f2dbb8389a3f2eef09ff82f12527868",
-  "secretKey": "87f3828794c2424bfc21ffe7c5d64d2b",
+  "clientKey": "c9bee2ba0b04fd2fe7d6a22347310040",
+  "secretKey": "d248f40f80b94d4d2125d03249f3888f",
   "content": {
     "pid": "249b3cd4-8686-48fd-8709-9da1368a6680",
     "info": {
@@ -9,7 +9,7 @@
       "socName": "HPM5361",
       "packageName": "QFN48",
       "createTime": 1791236041366,
-      "updateTime": 1791237781365
+      "updateTime": 1791302904192
     },
     "pinmux": {
       "functions": {
@@ -200,13 +200,9 @@
               }
             }
           }
-        },
-        "init_pins": {
-          "selectPins": {}
         }
       },
       "sorter": [
-        "init_pins",
         "init_bsp_pins",
         "init_bsp_jtag_shared_pins"
       ]

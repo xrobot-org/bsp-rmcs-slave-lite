@@ -20,10 +20,6 @@
 #include "hpm_gpiom_drv.h"
 
 
-void init_pins(void)
-{
-}
-
 void init_bsp_pins(void)
 {
     HPM_IOC->PAD[IOC_PAD_PA01].FUNC_CTL = IOC_PA01_FUNC_CTL_MCAN0_RXD;
