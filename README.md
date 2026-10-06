@@ -162,6 +162,12 @@ JLinkExe -Device HPM5361xEGx -If JTAG -JTAGConf -1,-1 -Speed 4000 -AutoConnect 1
 
 With the `flash_xip` presets the firmware executes from the on-board QSPI NOR flash, and with the `ram` preset it is loaded into RAM. With `RMCS_KEEP_JTAG` set to `ON` (the default), the JTAG connector of the board works with J-Link, as in the command above; in J-Link Commander, `loadfile build/output/demo.elf`, `r` and `g` download and start the firmware. OpenOCD uses the SoC and probe configurations in `boards/openocd/` of the SDK together with `rmcs_slave_lite.cfg` in the board directory, as described at the top of these files. The console is UART0 (PY00 TX, PY01 RX, 115200 baud). The board has no GPIO status LED; at run time `User/xrobot.yaml` creates no Module and the main function sleeps for 1000 ms in a loop.
 
+## 7. 修改引脚与时钟 / Changing Pins and Clocks
+
+引脚和时钟由 HPM Pinmux Tool 工程 `boards/rmcs_slave_lite/tool_config.hpmpc` 描述，`pinmux.c/h` 和 `clock.c/h` 是该工程导出的代码。BSP 的引脚在 `init_bsp_pins()` 中，与 JTAG 复用的 PA04–PA07 在 `init_bsp_jtag_shared_pins()` 中（见第 3 节），外设时钟在 `init_clocks()` 中。修改时在 [tools.hpmicro.com](https://tools.hpmicro.com/) 的 Pinmux Tool 中导入该工程，修改后导出工程文件和代码，用它们替换 `boards/rmcs_slave_lite/` 中的 `tool_config.hpmpc`、`pinmux.c/h` 和 `clock.c/h`，再重新构建。工程文件由工具校验，在工具之外编辑过的工程文件无法再导入。
+
+The pins and clocks are described by the HPM Pinmux Tool project `boards/rmcs_slave_lite/tool_config.hpmpc`; `pinmux.c/h` and `clock.c/h` are the code exported from it. The pins of the BSP are in `init_bsp_pins()`, PA04–PA07, which are shared with JTAG, in `init_bsp_jtag_shared_pins()` (see section 3), and the peripheral clocks in `init_clocks()`. To change them, import the project into the Pinmux Tool at [tools.hpmicro.com](https://tools.hpmicro.com/), make the change, export the project file and the code, replace `tool_config.hpmpc`, `pinmux.c/h` and `clock.c/h` in `boards/rmcs_slave_lite/` with them, and build again. The tool validates the project file; a project file edited outside the tool can no longer be imported.
+
 ## 许可 / License
 
 本仓库以 Apache-2.0 发布，见 [LICENSE](LICENSE)；`boards/rmcs_slave_lite/` 和 `CMakeLists.txt` 来自 HPM SDK，保留 HPMicro 的 BSD-3-Clause 声明。
