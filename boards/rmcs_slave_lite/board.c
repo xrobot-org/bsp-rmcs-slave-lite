@@ -15,7 +15,6 @@
 #include "board.h"
 #include "clock.h"
 #include "hpm_uart_drv.h"
-#include "hpm_i2c_drv.h"
 #include "hpm_sdk_version.h"
 #include "hpm_usb_drv.h"
 #include "hpm_clock_drv.h"
@@ -269,51 +268,4 @@ void board_ungate_mchtmr_at_lp_mode(void)
 
 void board_init_pmp(void)
 {
-}
-
-void board_i2c_bus_clear(I2C_Type *ptr)
-{
-    if (i2c_get_line_scl_status(ptr) == false) {
-        printf("CLK is low, please power cycle the board\n");
-        while (1) {
-        }
-    }
-    if (i2c_get_line_sda_status(ptr) == false) {
-        printf("SDA is low, try to issue I2C bus clear\n");
-    } else {
-        printf("I2C bus is ready\n");
-        return;
-    }
-    i2c_gen_reset_signal(ptr, 9);
-    board_delay_ms(100);
-    printf("I2C bus is cleared\n");
-}
-
-uint32_t board_init_i2c_clock(I2C_Type *ptr)
-{
-    uint32_t freq = 0;
-
-    if (ptr == HPM_I2C0) {
-        clock_add_to_group(clock_i2c0, 0);
-        freq = clock_get_frequency(clock_i2c0);
-    } else if (ptr == HPM_I2C1) {
-        clock_add_to_group(clock_i2c1, 0);
-        freq = clock_get_frequency(clock_i2c1);
-    } else if (ptr == HPM_I2C2) {
-        clock_add_to_group(clock_i2c2, 0);
-        freq = clock_get_frequency(clock_i2c2);
-    } else if (ptr == HPM_I2C3) {
-        clock_add_to_group(clock_i2c3, 0);
-        freq = clock_get_frequency(clock_i2c3);
-    } else {
-        ;
-    }
-
-    return freq;
-}
-
-void init_i2c_pins(I2C_Type *ptr)
-{
-    /* No I2C pins on this board: nothing to route. */
-    (void)ptr;
 }

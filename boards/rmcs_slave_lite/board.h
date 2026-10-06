@@ -30,11 +30,6 @@
 #define BOARD_UF2_SIGNATURE (0x0A4D5048UL)
 #define BOARD_DFU_SIGNATURE (0x48504D21UL)
 
-/* dma section */
-#define BOARD_APP_DMA0     HPM_HDMA
-#define BOARD_APP_DMA0_IRQ IRQn_HDMA
-#define BOARD_APP_DMAMUX   HPM_DMAMUX
-
 #ifndef BOARD_RUNNING_CORE
 #define BOARD_RUNNING_CORE HPM_CORE0
 #endif
@@ -57,53 +52,10 @@
 #endif
 #endif
 
-/* nor flash section: 1 MB QSPI NOR flash on XPI0 */
-#define BOARD_FLASH_BASE_ADDRESS (0x80000000UL)
-#define BOARD_FLASH_SIZE         (SIZE_1MB)
+/* Peripherals used by User/app_main.cpp; the pins are routed by init_bsp_pins() and
+ * init_bsp_jtag_shared_pins(). */
 
-/* Flash section */
-#define BOARD_APP_XPI_NOR_XPI_BASE     (HPM_XPI0)
-#define BOARD_APP_XPI_NOR_CFG_OPT_HDR  (0xfcf90002U)
-#define BOARD_APP_XPI_NOR_CFG_OPT_OPT0 (0x00000006U)
-#define BOARD_APP_XPI_NOR_CFG_OPT_OPT1 (0x00001000U)
-
-/* uart section: UART2 on PB08 (TX) / PB09 (RX) */
-#define BOARD_APP_UART_BASE       HPM_UART2
-#define BOARD_APP_UART_IRQ        IRQn_UART2
-#define BOARD_APP_UART_BAUDRATE   (115200UL)
-#define BOARD_APP_UART_CLK_NAME   clock_uart2
-#define BOARD_APP_UART_RX_DMA_REQ HPM_DMA_SRC_UART2_RX
-#define BOARD_APP_UART_TX_DMA_REQ HPM_DMA_SRC_UART2_TX
-
-/* DBUS receiver: UART7 RX on PA30 */
-#define BOARD_DBUS_UART_BASE       HPM_UART7
-#define BOARD_DBUS_UART_IRQ        IRQn_UART7
-#define BOARD_DBUS_UART_CLK_NAME   clock_uart7
-#define BOARD_DBUS_UART_RX_DMA_REQ HPM_DMA_SRC_UART7_RX
-
-/* CAN section: MCAN0 PA00/PA01, MCAN1 PA05/PA04 (JTAG-shared), MCAN2 PA08/PA09,
- * MCAN3 PB15/PB14 (TX/RX) */
-#define BOARD_CAN0_BASE     HPM_MCAN0
-#define BOARD_CAN0_IRQ      IRQn_MCAN0
-#define BOARD_CAN0_CLK_NAME clock_can0
-#define BOARD_CAN1_BASE     HPM_MCAN1
-#define BOARD_CAN1_IRQ      IRQn_MCAN1
-#define BOARD_CAN1_CLK_NAME clock_can1
-#define BOARD_CAN2_BASE     HPM_MCAN2
-#define BOARD_CAN2_IRQ      IRQn_MCAN2
-#define BOARD_CAN2_CLK_NAME clock_can2
-#define BOARD_CAN3_BASE     HPM_MCAN3
-#define BOARD_CAN3_IRQ      IRQn_MCAN3
-#define BOARD_CAN3_CLK_NAME clock_can3
-
-/* IMU section: BMI088 on SPI1 (PA27 SCLK, PA28 MISO, PA29 MOSI), chip selects and
- * interrupt lines are GPIOs */
-#define BOARD_IMU_SPI_BASE     HPM_SPI1
-#define BOARD_IMU_SPI_IRQ      IRQn_SPI1
-#define BOARD_IMU_SPI_CLK_NAME clock_spi1
-#define BOARD_IMU_SPI_RX_DMA   HPM_DMA_SRC_SPI1_RX
-#define BOARD_IMU_SPI_TX_DMA   HPM_DMA_SRC_SPI1_TX
-
+/* BMI088 chip selects and interrupt lines */
 #define BOARD_IMU_CS_GYRO_GPIO_CTRL  HPM_GPIO0
 #define BOARD_IMU_CS_GYRO_GPIO_INDEX GPIO_DI_GPIOB
 #define BOARD_IMU_CS_GYRO_GPIO_PIN   11
@@ -117,37 +69,21 @@
 #define BOARD_IMU_INT_ACCEL_GPIO_INDEX GPIO_DI_GPIOB
 #define BOARD_IMU_INT_ACCEL_GPIO_PIN   10
 
-/* gptmr section: IMU heater on PA26 (GPTMR2 COMP2), buzzer on PA10 (GPTMR0 COMP2) */
-#define BOARD_IMU_HEATER_GPTMR          HPM_GPTMR2
-#define BOARD_IMU_HEATER_GPTMR_CHANNEL  2
-#define BOARD_IMU_HEATER_GPTMR_CLK_NAME clock_gptmr2
-#define BOARD_BUZZER_GPTMR              HPM_GPTMR0
-#define BOARD_BUZZER_GPTMR_CHANNEL      2
-#define BOARD_BUZZER_GPTMR_CLK_NAME     clock_gptmr0
-
-/* WS2812 on PA06 (PWM1 P6, JTAG-shared); the PWM clock is clock_mot0 of the board group */
-#define BOARD_WS2812_PWM          HPM_PWM1
-#define BOARD_WS2812_PWM_OUT      6
-#define BOARD_WS2812_PWM_CLK_NAME clock_mot0
-
 /* User key on PA07 (JTAG-shared), pull-up, low when pressed */
 #define BOARD_KEY_GPIO_CTRL        HPM_GPIO0
 #define BOARD_KEY_GPIO_INDEX       GPIO_DI_GPIOA
 #define BOARD_KEY_GPIO_PIN         7
-#define BOARD_KEY_PRESSED_VALUE    0
 
 /* USB0 on PA24/PA25; PA31 reads the HS/FS switch */
 #define BOARD_USB_SW_GPIO_CTRL  HPM_GPIO0
 #define BOARD_USB_SW_GPIO_INDEX GPIO_DI_GPIOA
 #define BOARD_USB_SW_GPIO_PIN   31
 
-/* The pins are set after board_init(), so the banner and the clock summary of board_init()
- * would not reach the UART0 pins; they are off by default. */
 #ifndef BOARD_SHOW_CLOCK
-#define BOARD_SHOW_CLOCK 0
+#define BOARD_SHOW_CLOCK 1
 #endif
 #ifndef BOARD_SHOW_BANNER
-#define BOARD_SHOW_BANNER 0
+#define BOARD_SHOW_BANNER 1
 #endif
 
 #if defined(__cplusplus)
@@ -164,14 +100,6 @@ void board_print_clock_freq(void);
 void board_delay_us(uint32_t us);
 void board_delay_ms(uint32_t ms);
 void board_ungate_mchtmr_at_lp_mode(void);
-
-/*
- * Hooks the LibXR HPMI2C driver calls when it is built with board.h. The board routes no
- * I2C pins, so init_i2c_pins() sets none.
- */
-uint32_t board_init_i2c_clock(I2C_Type *ptr);
-void init_i2c_pins(I2C_Type *ptr);
-void board_i2c_bus_clear(I2C_Type *ptr);
 
 #if defined(__cplusplus)
 }
