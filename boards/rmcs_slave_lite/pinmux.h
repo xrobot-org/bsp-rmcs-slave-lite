@@ -21,7 +21,6 @@
 extern "C" {
 #endif
 
-void init_pins(void);
 void init_bsp_pins(void);
 void init_bsp_jtag_shared_pins(void);
 
