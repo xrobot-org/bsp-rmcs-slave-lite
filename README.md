@@ -4,7 +4,7 @@ HPM5361 RMCS Slave Lite 的 LibXR / XRobot BSP / LibXR and XRobot BSP for the HP
 
 ## 1. 板子与平台 / Board and Platform
 
-开发板为 RMCS Slave Lite（HPM5361IEG1，QFN48，RISC-V，24 MHz 晶振，板载 1 MB QSPI NOR Flash，位于 XPI0），无操作系统，外设由 LibXR 的 `hpm` 驱动提供。工程是标准的 HPM SDK 应用：SDK 位于仓库之外，由环境变量 `HPM_SDK_BASE` 指定，`CMakeLists.txt` 通过 `BOARD_SEARCH_PATH` 使用 `boards/rmcs_slave_lite/`。板级文件中，`pinmux.c`、`pinmux.h`、`clock.c`、`clock.h` 和 `tool_config.hpmpc` 由 HPM Pinmux Tool（[tools.hpmicro.com](https://tools.hpmicro.com/) 或 VS Code 扩展）导出，引脚和时钟都来自工具工程 `boards/rmcs_slave_lite/tool_config.hpmpc`：`pinmux.c` 中的 `init_bsp_pins()` 与 `init_bsp_jtag_shared_pins()` 设置引脚，`clock.c` 中的 `init_clocks()` 设置 PLL 和外设时钟。`board.c`、`board.h` 取自 HPM SDK v1.13.0 的 `boards/hpm5300evk` 并按本板改写，保留 HPMicro 的 BSD-3-Clause 声明；`rmcs_slave_lite.cfg` 是对应的 OpenOCD 配置。`User/main.cpp` 先调用 `init_bsp_pins()`，再调用 `board_init()`（其中调用 `init_clocks()`），`User/app_main.cpp` 创建 LibXR 对象并用 `XR_REGISTER` 完成硬件注册。配置中的硬件名即这些注册名：`imu_cs_gyro`、`imu_cs_accel`、`imu_int_gyro`、`imu_int_accel`、`usb_sw`、`key`。
+开发板为 RMCS Slave Lite（HPM5361IEG1，QFN48，RISC-V，24 MHz 晶振，板载 1 MB QSPI NOR Flash，位于 XPI0），无操作系统，外设由 LibXR 的 `hpm` 驱动提供。工程是标准的 HPM SDK 应用：SDK 位于仓库之外，由环境变量 `HPM_SDK_BASE` 指定，`CMakeLists.txt` 通过 `BOARD_SEARCH_PATH` 使用 `boards/rmcs_slave_lite/`。板级文件中，`pinmux.c`、`pinmux.h`、`clock.c`、`clock.h` 和 `tool_config.hpmpc` 由 HPM Pinmux Tool（[tools.hpmicro.com](https://tools.hpmicro.com/) 或 VS Code 扩展）导出，引脚和时钟都来自工具工程 `boards/rmcs_slave_lite/tool_config.hpmpc`：`pinmux.c` 中的 `init_bsp_pins()` 与 `init_bsp_jtag_shared_pins()` 设置引脚，`clock.c` 中的 `init_clocks()` 设置 PLL 和外设时钟。`board.c`、`board.h` 取自 HPM SDK v1.13.0 的 `boards/hpm5300evk` 并按本板改写，保留 HPMicro 的 BSD-3-Clause 声明；`rmcs_slave_lite.cfg` 是对应的 OpenOCD 配置。`main.c` 先调用 `init_bsp_pins()`，再调用 `board_init()`（其中调用 `init_clocks()`），`User/app_main.cpp` 创建 LibXR 对象并用 `XR_REGISTER` 完成硬件注册。配置中的硬件名即这些注册名：`imu_cs_gyro`、`imu_cs_accel`、`imu_int_gyro`、`imu_int_accel`、`usb_sw`、`key`。
 
 ```text
 CMakeLists.txt            HPM SDK 应用工程，含选项 RMCS_KEEP_JTAG
@@ -15,7 +15,7 @@ cmake/LibXR.CMake         LibXR 接入与编译选项
 Modules/modules.yaml      使用的模块（`xrobot:` 记录 XRobot 版本）
 Modules/sources.yaml      源
 xrobot.lock               每个模块使用的提交（lock）
-User/main.cpp             板级初始化与引脚、时钟初始化
+main.c                    板级初始化与引脚、时钟初始化
 User/app_main.cpp         入口源文件，硬件注册并调用 XROBOT_MAIN()
 User/xrobot.yaml          配置
 libxr/                    LibXR 子模块
@@ -23,7 +23,7 @@ libxr/                    LibXR 子模块
 
 `Modules/<owner>/<Repo>/`、`Modules/CMakeLists.txt` 和 `User/xrobot_main.hpp` 由 `xrobot` 生成，已列入 `.gitignore`。
 
-The board is the RMCS Slave Lite (HPM5361IEG1, QFN48, RISC-V, 24 MHz crystal, 1 MB on-board QSPI NOR flash on XPI0), without an operating system; the peripherals are provided by the LibXR `hpm` driver. The project is a standard HPM SDK application: the SDK lives outside the repository and is named by the environment variable `HPM_SDK_BASE`, and `CMakeLists.txt` uses `boards/rmcs_slave_lite/` through `BOARD_SEARCH_PATH`. Among the board files, `pinmux.c`, `pinmux.h`, `clock.c`, `clock.h` and `tool_config.hpmpc` are exported by the HPM Pinmux Tool ([tools.hpmicro.com](https://tools.hpmicro.com/) or the VS Code extension); pins and clocks both come from the tool project `boards/rmcs_slave_lite/tool_config.hpmpc`: `init_bsp_pins()` and `init_bsp_jtag_shared_pins()` in `pinmux.c` set the pins, and `init_clocks()` in `clock.c` sets the PLLs and the peripheral clocks. `board.c` and `board.h` are taken from `boards/hpm5300evk` of HPM SDK v1.13.0 and adapted to this board, keeping the HPMicro BSD-3-Clause notice; `rmcs_slave_lite.cfg` is the matching OpenOCD configuration. `User/main.cpp` calls `init_bsp_pins()` and then `board_init()`, which calls `init_clocks()`, and `User/app_main.cpp` creates the LibXR objects and performs the hardware registration with `XR_REGISTER`. The hardware names used in a configuration are these registered names: `imu_cs_gyro`, `imu_cs_accel`, `imu_int_gyro`, `imu_int_accel`, `usb_sw` and `key`.
+The board is the RMCS Slave Lite (HPM5361IEG1, QFN48, RISC-V, 24 MHz crystal, 1 MB on-board QSPI NOR flash on XPI0), without an operating system; the peripherals are provided by the LibXR `hpm` driver. The project is a standard HPM SDK application: the SDK lives outside the repository and is named by the environment variable `HPM_SDK_BASE`, and `CMakeLists.txt` uses `boards/rmcs_slave_lite/` through `BOARD_SEARCH_PATH`. Among the board files, `pinmux.c`, `pinmux.h`, `clock.c`, `clock.h` and `tool_config.hpmpc` are exported by the HPM Pinmux Tool ([tools.hpmicro.com](https://tools.hpmicro.com/) or the VS Code extension); pins and clocks both come from the tool project `boards/rmcs_slave_lite/tool_config.hpmpc`: `init_bsp_pins()` and `init_bsp_jtag_shared_pins()` in `pinmux.c` set the pins, and `init_clocks()` in `clock.c` sets the PLLs and the peripheral clocks. `board.c` and `board.h` are taken from `boards/hpm5300evk` of HPM SDK v1.13.0 and adapted to this board, keeping the HPMicro BSD-3-Clause notice; `rmcs_slave_lite.cfg` is the matching OpenOCD configuration. `main.c` calls `init_bsp_pins()` and then `board_init()`, which calls `init_clocks()`, and `User/app_main.cpp` creates the LibXR objects and performs the hardware registration with `XR_REGISTER`. The hardware names used in a configuration are these registered names: `imu_cs_gyro`, `imu_cs_accel`, `imu_int_gyro`, `imu_int_accel`, `usb_sw` and `key`.
 
 `Modules/<owner>/<Repo>/`, `Modules/CMakeLists.txt` and `User/xrobot_main.hpp` are generated by `xrobot` and listed in `.gitignore`.
 
@@ -81,7 +81,7 @@ To change pins or clocks, import `boards/rmcs_slave_lite/tool_config.hpmpc` into
 
 ## 3. JTAG 与 RMCS_KEEP_JTAG / JTAG and RMCS_KEEP_JTAG
 
-PA04 至 PA07 同时是 JTAG 的 TDO、TDI、TCK、TMS 引脚，也是 CAN1（PA04、PA05）、WS2812（PA06）和按键 KEY（PA07）的引脚，二者只能取其一。CMake 选项 `RMCS_KEEP_JTAG` 决定取舍：默认为 `ON`，PA04 至 PA07 保持 JTAG，调试器可以连接，CAN1、WS2812 和按键不配置；设为 `OFF` 时，`User/main.cpp` 调用 `init_bsp_jtag_shared_pins()`，把这四个引脚分配给 CAN1、WS2812 和按键，JTAG 随之停用。
+PA04 至 PA07 同时是 JTAG 的 TDO、TDI、TCK、TMS 引脚，也是 CAN1（PA04、PA05）、WS2812（PA06）和按键 KEY（PA07）的引脚，二者只能取其一。CMake 选项 `RMCS_KEEP_JTAG` 决定取舍：默认为 `ON`，PA04 至 PA07 保持 JTAG，调试器可以连接，CAN1、WS2812 和按键不配置；设为 `OFF` 时，`main.c` 调用 `init_bsp_jtag_shared_pins()`，把这四个引脚分配给 CAN1、WS2812 和按键，JTAG 随之停用。
 
 ```bash
 cmake --preset release-flash-xip -DRMCS_KEEP_JTAG=OFF
@@ -89,7 +89,7 @@ cmake --preset release-flash-xip -DRMCS_KEEP_JTAG=OFF
 
 `RMCS_KEEP_JTAG` 以编译定义的形式传给应用代码。`key` 对象始终创建并注册，因为 XRobot 的生成器不接受 `#if` 中的 `XR_REGISTER`；`RMCS_KEEP_JTAG` 为 `ON` 时它的引脚不配置，不应在模块中使用。
 
-PA04 to PA07 are the JTAG pins TDO, TDI, TCK and TMS, and also the pins of CAN1 (PA04, PA05), the WS2812 (PA06) and the key KEY (PA07); each pin serves only one of the two. The CMake option `RMCS_KEEP_JTAG` decides: it defaults to `ON`, which keeps PA04 to PA07 as JTAG so a debug probe can connect, and leaves CAN1, the WS2812 and the key unconfigured; with `OFF`, `User/main.cpp` calls `init_bsp_jtag_shared_pins()`, which assigns the four pins to CAN1, the WS2812 and the key and thereby disables JTAG.
+PA04 to PA07 are the JTAG pins TDO, TDI, TCK and TMS, and also the pins of CAN1 (PA04, PA05), the WS2812 (PA06) and the key KEY (PA07); each pin serves only one of the two. The CMake option `RMCS_KEEP_JTAG` decides: it defaults to `ON`, which keeps PA04 to PA07 as JTAG so a debug probe can connect, and leaves CAN1, the WS2812 and the key unconfigured; with `OFF`, `main.c` calls `init_bsp_jtag_shared_pins()`, which assigns the four pins to CAN1, the WS2812 and the key and thereby disables JTAG.
 
 `RMCS_KEEP_JTAG` is passed to the application code as a compile definition. The `key` object is always created and registered because the XRobot generator does not accept `XR_REGISTER` inside `#if`; with `RMCS_KEEP_JTAG` set to `ON` its pin is not configured and the object should not be used from a Module.
 
