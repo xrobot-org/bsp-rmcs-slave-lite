@@ -1,5 +1,6 @@
 // Board bring-up of the RMCS Slave Lite BSP.
-// Sets up the SDK board, then the pins and the clocks of the peripherals the board uses.
+// Sets up the clock group, the pins and then the SDK board with the clocks of the
+// peripherals the board uses.
 // The pins come from init_bsp_pins() and the clocks from init_clocks(); both are generated
 // by the HPM Pinmux Tool from boards/rmcs_slave_lite/tool_config.hpmpc. The LibXR objects
 // for these peripherals are created in app_main().
@@ -10,6 +11,10 @@
 
 int main(void)
 {
+  // Clock group of the core peripherals, GPIO among them: without it the GPIO direction and
+  // level writes of init_bsp_pins() (IMU CS high, inputs) are lost
+  board_init_clock_group();
+
   // Pins: CAN0 PA00/PA01, CAN2 PA08/PA09, CAN3 PB15/PB14, UART0 PY00/PY01 (console),
   // UART2 PB08/PB09, DBUS UART7 RX PA30, SPI1 PA27-PA29, IMU CS PB11/PB13 (high) and INT
   // PB12/PB10, USB switch PA31, buzzer GPTMR0 COMP2 PA10, IMU heater GPTMR2 COMP2 PA26,

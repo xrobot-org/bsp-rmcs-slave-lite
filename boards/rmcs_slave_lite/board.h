@@ -93,6 +93,7 @@ extern "C" {
 void board_init(void);
 void board_init_console(void);
 void board_init_clock(void);
+void board_init_clock_group(void);
 void board_init_usb_dp_dm_pins(void);
 void board_init_pmp(void);
 void board_print_banner(void);
