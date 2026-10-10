@@ -190,8 +190,10 @@ void board_init_usb_dp_dm_pins(void)
     }
 }
 
-/* Clocks of the board clock group 0, as the clock group of the hpm5300evk adds them */
-static void board_init_clock_group(void)
+/* Clocks of the board clock group 0, as the clock group of the hpm5300evk adds them. main()
+   calls it before init_bsp_pins(), whose GPIO writes need the GPIO clock; board_init_clock()
+   calls it again, which changes nothing. */
+void board_init_clock_group(void)
 {
     clock_add_to_group(clock_cpu0, 0);
 
