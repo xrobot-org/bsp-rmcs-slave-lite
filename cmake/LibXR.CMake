@@ -11,7 +11,6 @@ endif()
 # LibXR platform/driver selection
 set(LIBXR_SYSTEM None)
 set(LIBXR_DRIVER hpm)
-set(LIBXR_NO_EIGEN True)
 
 # Optional XRobot modules
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Modules")
